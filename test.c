@@ -31,9 +31,9 @@ void listUsers(SYSTEM_STATE *state)
 	getch();
 }
 
-void newUser(SYSTEM_STATE *state)
+void newUsers(SYSTEM_STATE *state)
 {
-	printf("New User");
+	printf("--New User--\n");
 
 	int indexForTheNewOne;
 	if (state->AntalSpelare == 0)
@@ -41,7 +41,6 @@ void newUser(SYSTEM_STATE *state)
 		state->allaSpelare = malloc(sizeof(USER));
 		state->AntalSpelare = 1;
 		indexForTheNewOne = 0;
-		//state.AntalSpelare[0] �r den vi ska l�gga in nya data p�
 	}
 	else
 	{
@@ -56,7 +55,7 @@ void newUser(SYSTEM_STATE *state)
 		sizeof(state->allaSpelare[indexForTheNewOne].name));
 
 	int jersey;
-	GetInputInt("Jersey", &jersey);
+	GetInputInt("Jersey: ", &jersey);
 	state->allaSpelare[indexForTheNewOne].jerseynumber = jersey;
 
 
@@ -67,9 +66,13 @@ void newUser(SYSTEM_STATE *state)
 
 void manageUser(SYSTEM_STATE *state)
 {
-	printf("Change access of user");
+	printf("Change access of user\n which\n");
 	printf("Press key to continue");
-	getch();
+	int indexForTheNewOne = 0;
+
+	int jersey;
+	GetInputInt("Jersey: ", &jersey);
+	state->allaSpelare[indexForTheNewOne].jerseynumber = jersey;
 
 }
 
@@ -79,67 +82,35 @@ void adminPanel(SYSTEM_STATE *state)
 	{
 		printf("---Admin Panel---\n");
 		printf("1. New User\n2. List users\n3. Manage\n");
-		printf("4. exit\n5. TEST");
+		printf("4. exit\n5. TEST\n");
 		int selection;
 		if (!GetInputInt("Choose an option: ", &selection))
 			continue;
 		switch (selection)
 		{
 		case 1:
-			newUser(state);
+			newUsers(state);
 			break;
 		case 2:
-			manageUser(state);
-			break;
-		case 3:
-			return;
-		}
-	}
-
-}
-
-
-void mainMenu(SYSTEM_STATE *state)
-{
-	while (true)
-	{
-		printf("***HOCKEYMENYN***\n");
-		printf("1. Lista spelare\n2. Admin\n3. Avsluta\n");
-		int selection;
-		if (GetInputInt("Ange val:>", &selection) == false)
-			continue;
-		switch (selection)
-		{
-		case 1:
 			listUsers(state);
 			break;
-		case 2:
-			adminPanel(state);
-			break;
 		case 3:
+			manageUser(state);
+			break;
+		case 4:
 			return 0;
 		}
-
 	}
 
 }
-
-void Add(int x)
-{
-	x = x + 1;
-}
-
 
 int main()
 {
-	int x = 13;
-	Add(x);
-	printf("%d", x);
 
 	SYSTEM_STATE state;
 	state.allaSpelare = NULL;
 	state.AntalSpelare = 0;
-	mainMenu(&state);
+	adminPanel(&state);
 
 	return 0;
 }
