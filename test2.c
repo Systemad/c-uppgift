@@ -10,7 +10,6 @@ typedef struct
 //	char date;
 
 	char name[20];
-	bool access;
 
 } USER;
 
@@ -20,6 +19,13 @@ typedef struct
 	USER* allUsers;
 	int amountOfUsers;
 }SYSTEM_STATE;
+
+// kanske
+typedef struct
+{
+	bool access;
+	bool noaccess;
+}ifAcsess;
 
 
 
