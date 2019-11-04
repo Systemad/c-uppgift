@@ -72,7 +72,7 @@ void newUsers(SYSTEM_STATE* state)
 	}
 
 	int newCard;
-	GetInputInt("\nENTER NEW PASSCARD NUMBER:> ", &newCard);
+	GetInputInt("\nEnter card number ", &newCard);
 
 	printf("What access should user have: \n");
 	int choice;
@@ -100,7 +100,7 @@ void newUsers(SYSTEM_STATE* state)
 
 void remoteOpen(SYSTEM_STATE* state)
 {
-	printf("\nCURRENTLY LAMP IS: Green");
+	printf("\nLamp is currently: GREEN\n");
 	//delay(3);
 }
 
@@ -113,30 +113,29 @@ void manageUser(SYSTEM_STATE* state)
 
 void fakeTest(SYSTEM_STATE* state)
 {
-	printf("lampan är OFF\n");
 	int cardtest;
-	GetInputInt("Kortnummer: ", &cardtest);
+	GetInputInt("Input card number: ", &cardtest);
 	for (int i = 0; i < state->amountOfUsers; i++)
 	{
 		if (state->allUsers[i].cardName == cardtest)
 		{
-			if (state->allUsers[i].cardName == true)
+			if (state->allUsers[i].access == true)
 			{
-				printf("LAMP: GREEN\n");
-				printf("Access granted: \n");
+				printf("\nLAMP: GREEN\n");
+				printf("Access granted!\n");
 				getch();
 				return;
 			}
 			else
 			{
-				printf("LAMP: RED\n");
-				printf("Access denied: \n");
+				printf("\nLAMP: RED\n");
+				printf("Access denied!\n");
 				getch();
 			}
 
 		}
 	}
-	printf("Card does not exist in tmhe syste\n");
+	printf("Card does not exist in the system\n");
 	getch();
 
 }
