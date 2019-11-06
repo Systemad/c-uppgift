@@ -49,6 +49,7 @@ void listUsers(SYSTEM_STATE* state)
 			printf("has no access - ");
 		printf("added to system: %s", p.dateAccess);
 	}
+	printf("\nPress enter to return\n");
 	getch();
 }
 
@@ -72,11 +73,11 @@ void newUsers(SYSTEM_STATE* state)
 	}
 
 	int newCard;
-	GetInputInt("\nEnter card number ", &newCard);
+	GetInputInt("\nEnter card number: ", &newCard);
 
 	printf("What access should user have: \n");
 	int choice;
-	printf("1. Access\n2. No Access");
+	printf("1. Access\n2. No Access\nChoose an option: ");
 	scanf("%d", &choice);
 
 	if (choice == 1) {
@@ -93,7 +94,7 @@ void newUsers(SYSTEM_STATE* state)
 
 	state->allUsers[index].cardName = newCard;
 	char accessDate[20];
-	snprintf(accessDate, 20, "%d-%d-%02d", datum->tm_year + 1900, datum->tm_mon + 1, datum->tm_mday);
+	snprintf(accessDate, 20, "%d-%d-%02d %02d:%02d", datum->tm_year + 1900, datum->tm_mon + 1, datum->tm_mday, datum->tm_hour, datum->tm_min);
 	strcpy(state->allUsers[index].dateAccess, accessDate);
 
 }
@@ -101,20 +102,12 @@ void newUsers(SYSTEM_STATE* state)
 void remoteOpen(SYSTEM_STATE* state)
 {
 	printf("\nLamp is currently: GREEN\n");
-	//delay(3);
-}
-
-void manageUser(SYSTEM_STATE* state)
-{
-	printf("Change access of user\n which\n");
-	printf("Press key to continue");
-
 }
 
 void fakeTest(SYSTEM_STATE* state)
 {
 	int cardtest;
-	GetInputInt("Input card number: ", &cardtest);
+	GetInputInt("Enter card number: ", &cardtest);
 	for (int i = 0; i < state->amountOfUsers; i++)
 	{
 		if (state->allUsers[i].cardName == cardtest)
@@ -126,16 +119,17 @@ void fakeTest(SYSTEM_STATE* state)
 				getch();
 				return;
 			}
-			else
+			else if (state->allUsers[i].access == false)
 			{
 				printf("\nLAMP: RED\n");
 				printf("Access denied!\n");
 				getch();
 			}
+			else
+				printf("Card does not exist in the system\n");
 
 		}
 	}
-	printf("Card does not exist in the system\n");
 	getch();
 
 }
@@ -147,7 +141,7 @@ void adminPanel(SYSTEM_STATE* state)
 	{
 		printf("---Admin Panel---\n");
 		printf("1. Remote open door\n2. List users\n3. New User\n");
-		printf("4. Manage user\n5. Fake test\n6. Exit\n");
+		printf("4. Fake test\n5. Exit\n");
 		int selection;
 		if (!GetInputInt("Choose an option: ", &selection))
 			continue;
@@ -163,12 +157,9 @@ void adminPanel(SYSTEM_STATE* state)
 			newUsers(state);
 			break;
 		case 4:
-			manageUser(state);
-			break;
-		case 5:
 			fakeTest(state);
 			break;
-		case 6:
+		case 5:
 			return;
 		}
 	}
