@@ -1,160 +1,178 @@
-/*
-#define ACCESS = 1
-#define NOACCESS = 2
-
-*/
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
+#include <time.h>
 #include <stdlib.h>
 #include "safeinput.h"
 #include <stdbool.h>
 
 typedef struct
 {
-	char name[50];
-	int jerseynumber;
-} USER;
+	int cardName;
+	char dateAccess[20];
+	bool access;
+
+} CARD;
 
 
 typedef struct
 {
-	USER* userList;
-	int amOfPLayers;
-}USER_STATE;
+	CARD* allUsers;
+	int amountOfUsers;
+}SYSTEM_STATE;
 
-void remoteDoor() {
-	printf("Lamp is: Green\n");
-	return;
-}
-
-
-void listUsers(USER_STATE *state)
+void listAllCardsInSystem(SYSTEM_STATE* state)
 {
-	printf("Users in system\n");
-	for (int i = 0; i < state->amOfPLayers; i++)
+	printf("\tLIST OF ALL CARDS IN SYSTEM\n");
+	for (int i = 0; i < state->amountOfUsers; i++)
 	{
-		USER u = state->userList[i];
-		printf("%s %d\n", u.name, u.jerseynumber);
+		CARD p = state->allUsers[i];
+		printf("\n%d.", p.cardName);
+		if (p.access == true)
+			printf("Access");
+		else
+			printf("No access");
+		printf("Added to system: %s", p.dateAccess);
 	}
-	return;
+	getch();
 }
 
-void addUser(USER_STATE *state){
-	printf("NY SPELARE\n");
-
-	int newUser;
-	if (state->amOfPLayers == 0)
+void listUsers(SYSTEM_STATE* state)
+{
+	printf("Listing all users...\n");
+	for (int i = 0; i < state->amountOfUsers; i++)
 	{
-		state->userList = malloc(sizeof(USER));
-		state->amOfPLayers = 1;
-		newUser = 0;
+		CARD p = state->allUsers[i];
+		printf("\n%d ", p.cardName);
+		if (p.access == true)
+			printf("has access - ");
+		else
+			printf("has no access - ");
+		printf("added to system: %s", p.dateAccess);
+	}
+	printf("\nPress enter to return\n");
+	getch();
+}
+
+void newUsers(SYSTEM_STATE* state)
+{
+	printf("--New User--\n");
+
+	int index;
+	if (state->amountOfUsers == 0)
+	{
+		state->allUsers = malloc(sizeof(CARD));
+		state->amountOfUsers = 1;
+		index = 0;
 	}
 	else
 	{
-		state->userList = realloc(state->userList,
-			sizeof(USER) * (state->amOfPLayers + 1));
-		newUser = state->amOfPLayers;
-		state->amOfPLayers++;
+		state->allUsers = realloc(state->allUsers,
+			sizeof(CARD) * (state->amountOfUsers + 1));
+		index = state->amountOfUsers;
+		state->amountOfUsers++;
 	}
 
+	int newCard;
+	GetInputInt("\nEnter card number: ", &newCard);
 
-	GetInput("Name: ", state->userList[newUser].name,
-		sizeof(state->userList[newUser].name));
+	printf("What access should user have: \n");
+	int choice;
+	printf("1. Access\n2. No Access\nChoose an option: ");
+	scanf("%d", &choice);
 
-	int jersey;
-	GetInputInt("Jersey: ", &jersey);
-	state->userList[newUser].jerseynumber = jersey;
+	if (choice == 1) {
+		state->allUsers[index].access = true;
 
-	printf("Press key to continue");
+	}
+	else {
+		state->allUsers[index].access = false;
+	}
+
+	time_t justNu = time(NULL);
+	struct tm* datum = localtime(&justNu);
+
+
+	state->allUsers[index].cardName = newCard;
+	char accessDate[20];
+	snprintf(accessDate, 20, "%d-%d-%02d %02d:%02d", datum->tm_year + 1900, datum->tm_mon + 1, datum->tm_mday, datum->tm_hour, datum->tm_min);
+	strcpy(state->allUsers[index].dateAccess, accessDate);
+
+}
+
+void remoteOpen(SYSTEM_STATE* state)
+{
+	printf("\nLamp is currently: GREEN\n");
+}
+
+void fakeTest(SYSTEM_STATE* state)
+{
+	int cardtest;
+	GetInputInt("Enter card number: ", &cardtest);
+	for (int i = 0; i < state->amountOfUsers; i++)
+	{
+		if (state->allUsers[i].cardName == cardtest)
+		{
+			if (state->allUsers[i].access == true)
+			{
+				printf("\nLAMP: GREEN\n");
+				printf("Access granted!\n");
+				getch();
+				return;
+			}
+			else if (state->allUsers[i].access == false)
+			{
+				printf("\nLAMP: RED\n");
+				printf("Access denied!\n");
+				getch();
+			}
+			else
+				printf("Card does not exist in the system\n");
+
+		}
+	}
 	getch();
 
 }
 
-void manageUser(USER_STATE *state){
-	printf("Manager User\n");
-	printf("Press key to continue");
-	return;
 
-}
-/*
-void addUser(USER_STATE *state){
-	while (true)
-	{
-		printf("***ADMIN***\n");
-		printf("1. Ny spelare\n2. Change spelare\n3. Tillbaka\n");
-		int selection;
-		if (!GetInputInt("Ange val:>", &selection))
-			continue;
-		switch (selection)
-		{
-		case 1:
-			addUser(state);
-			break;
-		case 2:
-			manageUser(state);
-			break;
-		case 3:
-			return;
-		}
-	}
-
-}
-*/
-
-void Add(int x)
-{
-	x = x + 1;
-}
-
-void mainMenu(USER_STATE *state)
+void adminPanel(SYSTEM_STATE* state)
 {
 	while (true)
 	{
 		printf("---Admin Panel---\n");
-		printf("1. Remote Open Door\n");
-		printf("2. List Users\n");
-		printf("3. Add User\n");
-		printf("4. Manage User\n");
-		printf("5. Exit\n");
-		printf("6. TEST\n");
-		int choice;
-		scanf("%d", &choice);
-//		if (GetInputInt("Ange val:>", &selection) == false)
-//			continue;
-		switch (choice)
+		printf("1. Remote open door\n2. List users\n3. New User\n");
+		printf("4. Fake test\n5. Exit\n");
+		int selection;
+		if (!GetInputInt("Choose an option: ", &selection))
+			continue;
+		switch (selection)
 		{
 		case 1:
-			remoteDoor(state);
+			remoteOpen(state);
 			break;
 		case 2:
 			listUsers(state);
 			break;
 		case 3:
-			addUser(state);
+			newUsers(state);
 			break;
 		case 4:
-			manageUser(state);
+			fakeTest(state);
 			break;
 		case 5:
 			return;
 		}
-
 	}
 
 }
 
-
 int main()
 {
-	int x = 13;
-	Add(x);
-	printf("%d", x);
 
-	USER_STATE state;
-	state.userList = NULL;
-	state.amOfPLayers = 0;
-	mainMenu(&state);
+	SYSTEM_STATE state;
+	state.allUsers = NULL;
+	state.amountOfUsers = 0;
+	adminPanel(&state);
 
-	return;
+	return 0;
 }
-
